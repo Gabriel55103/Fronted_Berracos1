@@ -63,12 +63,14 @@ const servicioInicial = {
   descripcion: "",
   icono: "✂",
   precio: "",
+  imagen: "",
 };
 
 const corteInicial = {
   nombre: "",
   descripcion: "",
   precio: "",
+  imagen: "",
 };
 
 const barberoInicial = {
@@ -118,9 +120,7 @@ export default function PanelAdmin() {
     useState<UsuarioAdmin | null>(null);
 
   const [imagenBarbero, setImagenBarbero] = useState<File | null>(null);
-  const [imagenServicio, setImagenServicio] = useState<File | null>(null);
-  const [imagenCorte, setImagenCorte] = useState<File | null>(null);
-
+ 
   const [cargando, setCargando] = useState(false);
   const [cargandoUsuarios, setCargandoUsuarios] = useState(false);
   const [cargandoReservaciones, setCargandoReservaciones] = useState(false);
@@ -448,6 +448,7 @@ export default function PanelAdmin() {
         descripcion: formServicio.descripcion.trim(),
         icono: formServicio.icono.trim(),
         precio,
+        imagen: formServicio.imagen.trim() || null,
         activo: true,
       };
 
@@ -470,16 +471,8 @@ export default function PanelAdmin() {
         });
       }
 
-      if (imagenServicio) {
-        await subirImagen(
-          `/api/servicios/${servicio.idServicio}/imagen`,
-          imagenServicio
-        );
-      }
-
-      setFormServicio(servicioInicial);
+       setFormServicio(servicioInicial);
       setServicioEditando(null);
-      setImagenServicio(null);
 
       setMensaje(
         servicioEditando
@@ -508,9 +501,8 @@ export default function PanelAdmin() {
       descripcion: servicio.descripcion,
       icono: servicio.icono,
       precio: String(servicio.precio),
+      imagen: servicio.imagen || "",
     });
-
-    setImagenServicio(null);
     setMensaje("");
     setError("");
 
@@ -564,6 +556,7 @@ export default function PanelAdmin() {
         nombre: formCorte.nombre.trim(),
         descripcion: formCorte.descripcion.trim(),
         precio,
+        imagen: formCorte.imagen.trim() || null,
         activo: true,
       };
 
@@ -586,16 +579,8 @@ export default function PanelAdmin() {
         });
       }
 
-      if (imagenCorte) {
-        await subirImagen(
-          `/api/cortes/${corte.idCorte}/imagen`,
-          imagenCorte
-        );
-      }
-
-      setFormCorte(corteInicial);
+       setFormCorte(corteInicial);
       setCorteEditando(null);
-      setImagenCorte(null);
 
       setMensaje(
         corteEditando
@@ -623,9 +608,8 @@ export default function PanelAdmin() {
       nombre: corte.nombre,
       descripcion: corte.descripcion,
       precio: String(corte.precio),
+      imagen: corte.imagen || "",
     });
-
-    setImagenCorte(null);
     setMensaje("");
     setError("");
 
@@ -1595,25 +1579,25 @@ export default function PanelAdmin() {
 
             <label>Imagen del servicio</label>
 
-            {servicioEditando?.imagen && (
+            {formServicio.imagen && (
               <img
-                src={urlImagen(servicioEditando.imagen)}
-                alt={servicioEditando.nombre}
+                src={urlImagen(formServicio.imagen)}
+                alt={formServicio.nombre || "Vista previa del servicio"}
                 className="admin-imagen-preview"
               />
             )}
 
             <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
+              type="url"
+              value={formServicio.imagen}
               onChange={(e) =>
-                setImagenServicio(e.target.files?.[0] || null)
+                setFormServicio({
+                  ...formServicio,
+                  imagen: e.target.value,
+                })
               }
+              placeholder="Pega aquí la URL pública de Google Drive"
             />
-
-            {imagenServicio && (
-              <small>Archivo seleccionado: {imagenServicio.name}</small>
-            )}
 
             <div className="admin-formulario-acciones">
               <button
@@ -1635,8 +1619,7 @@ export default function PanelAdmin() {
                   onClick={() => {
                     setServicioEditando(null);
                     setFormServicio(servicioInicial);
-                    setImagenServicio(null);
-                    setError("");
+                                  setError("");
                     setMensaje("");
                   }}
                 >
@@ -1776,25 +1759,25 @@ export default function PanelAdmin() {
 
             <label>Imagen del corte</label>
 
-            {corteEditando?.imagen && (
+            {formCorte.imagen && (
               <img
-                src={urlImagen(corteEditando.imagen)}
-                alt={corteEditando.nombre}
+                src={urlImagen(formCorte.imagen)}
+                alt={formCorte.nombre || "Vista previa del corte"}
                 className="admin-imagen-preview"
               />
             )}
 
             <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
+              type="url"
+              value={formCorte.imagen}
               onChange={(e) =>
-                setImagenCorte(e.target.files?.[0] || null)
+                setFormCorte({
+                  ...formCorte,
+                  imagen: e.target.value,
+                })
               }
+              placeholder="Pega aquí la URL pública de Google Drive"
             />
-
-            {imagenCorte && (
-              <small>Archivo seleccionado: {imagenCorte.name}</small>
-            )}
 
             <div className="admin-formulario-acciones">
               <button
@@ -1816,8 +1799,7 @@ export default function PanelAdmin() {
                   onClick={() => {
                     setCorteEditando(null);
                     setFormCorte(corteInicial);
-                    setImagenCorte(null);
-                    setError("");
+                                  setError("");
                     setMensaje("");
                   }}
                 >
