@@ -98,6 +98,7 @@ export default function Page() {
         cambiarVista={cambiarVista}
         usuario={usuario}
         cerrarSesion={salir}
+        vistaActual={vista}
       />
 
       {/* INICIO */}
