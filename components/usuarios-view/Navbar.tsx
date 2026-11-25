@@ -1,138 +1,85 @@
-
 "use client";
 
-import { useState } from "react";
 import type { UsuarioSesion } from "@/lib/sesion";
 
 type NavbarProps = {
   cambiarVista: (vista: string) => void;
   usuario: UsuarioSesion | null;
   cerrarSesion: () => void;
+  vistaActual: string;
 };
 
 export default function Navbar({
   cambiarVista,
   usuario,
   cerrarSesion,
+  vistaActual,
 }: NavbarProps) {
-  const [menuAbierto, setMenuAbierto] = useState(false);
+  const navegar = (vista: string) => cambiarVista(vista);
 
-  const navegar = (vista: string) => {
-    cambiarVista(vista);
-    setMenuAbierto(false);
-  };
+  const enlaces = [
+    { vista: "inicio", etiqueta: "INICIO" },
+    { vista: "servicios", etiqueta: "SERVICIOS" },
+    { vista: "barberos", etiqueta: "BARBEROS" },
+    { vista: "cortes", etiqueta: "CORTES" },
+    { vista: "calendario", etiqueta: "DISPONIBILIDAD" },
+    { vista: "ubicacion", etiqueta: "UBICACIÓN" },
+  ];
 
-  const salir = () => {
-    setMenuAbierto(false);
-    cerrarSesion();
-  };
+  if (usuario?.rol === "CLIENTE") {
+    enlaces.push(
+      { vista: "reservar", etiqueta: "RESERVAR CITA" },
+      { vista: "mis-reservaciones", etiqueta: "MIS RESERVACIONES" }
+    );
+  }
+
+  if (usuario?.rol === "BARBERO") {
+    enlaces.push({ vista: "panel-barbero", etiqueta: "MI PANEL" });
+  }
+
+  if (usuario?.rol === "ADMIN") {
+    enlaces.push({ vista: "panel-admin", etiqueta: "ADMINISTRACIÓN" });
+  }
+
+  if (!usuario) {
+    enlaces.push({ vista: "reservar", etiqueta: "RESERVAR CITA" });
+  }
 
   return (
-    <nav className="navbar">
-      <div
-        className="navbar-logo"
-        onClick={() => navegar("inicio")}
-        style={{ cursor: "pointer" }}
-      >
-        BERRACOS<span>BARBER</span>
-      </div>
-
+    <nav className="navbar" aria-label="Navegación principal">
       <button
         type="button"
-        className={`navbar-menu-boton ${menuAbierto ? "activo" : ""}`}
-        onClick={() => setMenuAbierto((actual) => !actual)}
-        aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
-        aria-expanded={menuAbierto}
-        aria-controls="navbar-menu"
+        className="navbar-logo"
+        onClick={() => navegar("inicio")}
+        aria-label="Berracos Barber, ir al inicio"
       >
-        <span></span>
-        <span></span>
-        <span></span>
+        BERRACOS<span>BARBER</span>
       </button>
 
-      <div
-        id="navbar-menu"
-        className={`navbar-menu-contenido ${
-          menuAbierto ? "menu-abierto" : ""
-        }`}
-      >
+      <div className="navbar-menu-contenido">
         <ul className="navbar-links">
-          <li>
-            <button onClick={() => navegar("inicio")}>INICIO</button>
-          </li>
-
-          <li>
-            <button onClick={() => navegar("servicios")}>SERVICIOS</button>
-          </li>
-
-          <li>
-            <button onClick={() => navegar("barberos")}>BARBEROS</button>
-          </li>
-
-          <li>
-            <button onClick={() => navegar("cortes")}>CORTES</button>
-          </li>
-
-          <li>
-            <button onClick={() => navegar("calendario")}>
-              DISPONIBILIDAD
-            </button>
-          </li>
-
-          <li>
-            <button onClick={() => navegar("ubicacion")}>UBICACIÓN</button>
-          </li>
-
-          {usuario?.rol === "CLIENTE" && (
-            <>
-              <li>
-                <button onClick={() => navegar("reservar")}>
-                  RESERVAR CITA
-                </button>
-              </li>
-
-              <li>
-                <button onClick={() => navegar("mis-reservaciones")}>
-                  MIS RESERVACIONES
-                </button>
-              </li>
-            </>
-          )}
-
-          {usuario?.rol === "BARBERO" && (
-            <li>
-              <button onClick={() => navegar("panel-barbero")}>
-                MI PANEL
+          {enlaces.map((enlace) => (
+            <li key={enlace.vista}>
+              <button
+                type="button"
+                className={vistaActual === enlace.vista ? "activo" : ""}
+                aria-current={vistaActual === enlace.vista ? "page" : undefined}
+                onClick={() => navegar(enlace.vista)}
+              >
+                {enlace.etiqueta}
               </button>
             </li>
-          )}
-
-          {usuario?.rol === "ADMIN" && (
-            <li>
-              <button onClick={() => navegar("panel-admin")}>
-                ADMINISTRACIÓN
-              </button>
-            </li>
-          )}
-
-          {!usuario && (
-            <li>
-              <button onClick={() => navegar("reservar")}>
-                RESERVAR CITA
-              </button>
-            </li>
-          )}
+          ))}
         </ul>
 
         <div className="navbar-usuario">
           {usuario ? (
             <>
               <span>HOLA, {usuario.nombre.toUpperCase()}</span>
-
               <button
                 type="button"
                 className="navbar-login navbar-cerrar"
-                onClick={salir}
+                onClick={cerrarSesion}
               >
                 CERRAR SESIÓN
               </button>
