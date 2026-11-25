@@ -106,56 +106,6 @@ export default function Page() {
         <main className="inicio">
           <Hero cambiarVista={cambiarVista} />
 
-          <div className="inicio-accesos">
-            <div className="inicio-accesos-contenido">
-              <span>ACCESO RÁPIDO</span>
-
-              <h2>¿Qué deseas hacer?</h2>
-
-              <p>
-                Explora nuestros servicios, conoce a nuestros barberos o
-                reserva tu cita.
-              </p>
-
-              <div className="inicio-accesos-botones">
-                <button
-                  className="inicio-acceso"
-                  onClick={() => cambiarVista("servicios")}
-                >
-                  SERVICIOS
-                </button>
-
-                <button
-                  className="inicio-acceso"
-                  onClick={() => cambiarVista("barberos")}
-                >
-                  BARBEROS
-                </button>
-
-                <button
-                  className="inicio-acceso"
-                  onClick={() => cambiarVista("cortes")}
-                >
-                  CORTES
-                </button>
-
-                <button
-                  className="inicio-acceso inicio-acceso-principal"
-                  onClick={() => cambiarVista("reservar")}
-                >
-                  RESERVAR CITA
-                </button>
-
-                <button
-                  className="inicio-acceso"
-                  onClick={() => cambiarVista("ubicacion")}
-                >
-                  UBICACIÓN
-                </button>
-              </div>
-            </div>
-          </div>
-
           <Servicios cambiarVista={cambiarVista} />
           <Barberos cambiarVista={cambiarVista} />
           <Cortes cambiarVista={cambiarVista} />
