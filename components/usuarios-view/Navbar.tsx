@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { UsuarioSesion } from "@/lib/sesion";
 
 type NavbarProps = {
@@ -15,7 +16,17 @@ export default function Navbar({
   cerrarSesion,
   vistaActual,
 }: NavbarProps) {
-  const navegar = (vista: string) => cambiarVista(vista);
+  const [menuAbierto, setMenuAbierto] = useState(false);
+
+  const navegar = (vista: string) => {
+    cambiarVista(vista);
+    setMenuAbierto(false);
+  };
+
+  const salir = () => {
+    setMenuAbierto(false);
+    cerrarSesion();
+  };
 
   const enlaces = [
     { vista: "inicio", etiqueta: "INICIO" },
@@ -56,7 +67,23 @@ export default function Navbar({
         BERRACOS<span>BARBER</span>
       </button>
 
-      <div className="navbar-menu-contenido">
+      <button
+        type="button"
+        className={`navbar-menu-boton ${menuAbierto ? "activo" : ""}`}
+        onClick={() => setMenuAbierto((abierto) => !abierto)}
+        aria-label={menuAbierto ? "Cerrar menú" : "Abrir menú"}
+        aria-expanded={menuAbierto}
+        aria-controls="navbar-menu"
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      <div
+        id="navbar-menu"
+        className={`navbar-menu-contenido ${menuAbierto ? "menu-abierto" : ""}`}
+      >
         <ul className="navbar-links">
           {enlaces.map((enlace) => (
             <li key={enlace.vista}>
@@ -79,7 +106,7 @@ export default function Navbar({
               <button
                 type="button"
                 className="navbar-login navbar-cerrar"
-                onClick={cerrarSesion}
+                onClick={salir}
               >
                 CERRAR SESIÓN
               </button>
