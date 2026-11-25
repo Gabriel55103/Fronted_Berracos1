@@ -3297,7 +3297,7 @@ button {
 }
 
 
-/* Navegación superior responsiva: reemplaza el menú desplegable por enlaces visibles. */
+/* Navegación superior: escritorio con enlaces visibles y menú compacto en móvil. */
 .navbar {
   gap: 22px;
   padding: 0 28px;
@@ -3310,7 +3310,7 @@ button {
 }
 
 .navbar-menu-boton {
-  display: none !important;
+  display: none;
 }
 
 .navbar-menu-contenido,
@@ -3421,14 +3421,15 @@ button {
   }
 }
 
+/* En teléfonos se usa el botón de tres barras y un desplegable vertical. */
 @media (max-width: 760px) {
   .navbar {
-    height: auto;
+    height: 75px;
     min-height: 75px;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 0;
-    padding: 12px 16px 0;
+    padding: 0 16px;
   }
 
   .navbar-logo {
@@ -3436,56 +3437,145 @@ button {
     font-size: 17px;
   }
 
+  .navbar-menu-boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    padding: 9px;
+    border: 1px solid rgba(47, 164, 255, 0.65);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 2002;
+  }
+
+  .navbar-menu-boton span {
+    display: block;
+    width: 23px;
+    height: 2px;
+    flex: 0 0 2px;
+    border-radius: 5px;
+    background: #2fa4ff;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  .navbar-menu-boton.activo span:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .navbar-menu-boton.activo span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-menu-boton.activo span:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
   .navbar-menu-contenido,
   .navbar-menu-contenido.menu-abierto {
-    order: 3;
-    display: flex;
-    flex: 1 0 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex: none;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    justify-content: flex-start;
+    gap: 12px;
     width: 100%;
-    margin-top: 8px;
-    padding: 0 0 10px;
-    overflow: hidden;
+    max-width: 100%;
+    max-height: calc(100vh - 85px);
+    margin: 0;
+    padding: 14px 18px 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: rgba(2, 6, 11, 0.98);
+    border: 1px solid rgba(47, 164, 255, 0.35);
+    border-top: 1px solid rgba(47, 164, 255, 0.35);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+    z-index: 2001;
+  }
+
+  .navbar-menu-contenido.menu-abierto {
+    display: flex;
   }
 
   .navbar-menu-contenido .navbar-links {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
     justify-content: flex-start;
-    gap: 8px;
+    flex-wrap: nowrap;
+    gap: 3px;
     width: 100%;
-    padding: 2px 0 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(47, 164, 255, 0.55) transparent;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    white-space: normal;
+    list-style: none;
+  }
+
+  .navbar-menu-contenido .navbar-links li {
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
   }
 
   .navbar-menu-contenido .navbar-links li > button {
-    min-height: 40px;
-    padding: 8px 10px;
-    font-size: 11px;
+    display: block;
+    width: 100%;
+    min-height: 43px;
+    padding: 11px 10px;
+    text-align: left;
+    white-space: normal;
+    font-size: 12px;
+  }
+
+  .navbar-menu-contenido .navbar-links li > button::after {
+    bottom: 4px;
   }
 
   .navbar-menu-contenido .navbar-usuario {
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
     width: 100%;
     max-width: none;
-    padding-top: 8px;
+    padding-top: 14px;
     border-top: 1px solid rgba(47, 164, 255, 0.22);
-    text-align: right;
+    color: #ffffff;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
   }
 
   .navbar-menu-contenido .navbar-usuario .navbar-login,
   .navbar-menu-contenido .navbar-usuario .navbar-cerrar {
-    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    white-space: nowrap;
   }
 
   .seccion {
-    scroll-margin-top: 125px;
+    scroll-margin-top: 95px;
   }
 }
 
@@ -3498,10 +3588,5 @@ button {
   .navbar-logo {
     font-size: 15px;
     letter-spacing: 1.5px;
-  }
-
-  .navbar-menu-contenido .navbar-usuario {
-    justify-content: space-between;
-    font-size: 10px;
   }
 }
