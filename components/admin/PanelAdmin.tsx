@@ -120,7 +120,9 @@ export default function PanelAdmin() {
     useState<UsuarioAdmin | null>(null);
 
   const [imagenBarbero, setImagenBarbero] = useState<File | null>(null);
- 
+  const [imagenServicio, setImagenServicio] = useState<File | null>(null);
+  const [imagenCorte, setImagenCorte] = useState<File | null>(null);
+
   const [cargando, setCargando] = useState(false);
   const [cargandoUsuarios, setCargandoUsuarios] = useState(false);
   const [cargandoReservaciones, setCargandoReservaciones] = useState(false);
@@ -471,7 +473,15 @@ export default function PanelAdmin() {
         });
       }
 
-       setFormServicio(servicioInicial);
+      if (imagenServicio) {
+        await subirImagen(
+          `/api/servicios/${servicio.idServicio}/imagen`,
+          imagenServicio
+        );
+      }
+
+      setFormServicio(servicioInicial);
+      setImagenServicio(null);
       setServicioEditando(null);
 
       setMensaje(
@@ -503,6 +513,7 @@ export default function PanelAdmin() {
       precio: String(servicio.precio),
       imagen: servicio.imagen || "",
     });
+    setImagenServicio(null);
     setMensaje("");
     setError("");
 
@@ -579,7 +590,15 @@ export default function PanelAdmin() {
         });
       }
 
-       setFormCorte(corteInicial);
+      if (imagenCorte) {
+        await subirImagen(
+          `/api/cortes/${corte.idCorte}/imagen`,
+          imagenCorte
+        );
+      }
+
+      setFormCorte(corteInicial);
+      setImagenCorte(null);
       setCorteEditando(null);
 
       setMensaje(
@@ -610,6 +629,7 @@ export default function PanelAdmin() {
       precio: String(corte.precio),
       imagen: corte.imagen || "",
     });
+    setImagenCorte(null);
     setMensaje("");
     setError("");
 
@@ -1587,6 +1607,7 @@ export default function PanelAdmin() {
               />
             )}
 
+            <label>URL de la imagen (opcional)</label>
             <input
               type="url"
               value={formServicio.imagen}
@@ -1598,6 +1619,18 @@ export default function PanelAdmin() {
               }
               placeholder="Pega aquí la URL pública de Google Drive"
             />
+
+            <label>O selecciona una imagen desde tu dispositivo</label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) =>
+                setImagenServicio(e.target.files?.[0] || null)
+              }
+            />
+            {imagenServicio && (
+              <small>Archivo seleccionado: {imagenServicio.name}</small>
+            )}
 
             <div className="admin-formulario-acciones">
               <button
@@ -1619,7 +1652,8 @@ export default function PanelAdmin() {
                   onClick={() => {
                     setServicioEditando(null);
                     setFormServicio(servicioInicial);
-                                  setError("");
+                    setImagenServicio(null);
+                    setError("");
                     setMensaje("");
                   }}
                 >
@@ -1767,6 +1801,7 @@ export default function PanelAdmin() {
               />
             )}
 
+            <label>URL de la imagen (opcional)</label>
             <input
               type="url"
               value={formCorte.imagen}
@@ -1778,6 +1813,18 @@ export default function PanelAdmin() {
               }
               placeholder="Pega aquí la URL pública de Google Drive"
             />
+
+            <label>O selecciona una imagen desde tu dispositivo</label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) =>
+                setImagenCorte(e.target.files?.[0] || null)
+              }
+            />
+            {imagenCorte && (
+              <small>Archivo seleccionado: {imagenCorte.name}</small>
+            )}
 
             <div className="admin-formulario-acciones">
               <button
@@ -1799,7 +1846,8 @@ export default function PanelAdmin() {
                   onClick={() => {
                     setCorteEditando(null);
                     setFormCorte(corteInicial);
-                                  setError("");
+                    setImagenCorte(null);
+                    setError("");
                     setMensaje("");
                   }}
                 >
