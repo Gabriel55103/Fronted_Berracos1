@@ -27,6 +27,7 @@ import {
 
 export default function Page() {
   const [vista, setVista] = useState("inicio");
+  const [servicioInicialId, setServicioInicialId] = useState<number | null>(null);
   const [usuario, setUsuario] = useState<UsuarioSesion | null>(null);
   const [cargando, setCargando] = useState(true);
 
@@ -106,7 +107,13 @@ export default function Page() {
         <main className="inicio">
           <Hero cambiarVista={cambiarVista} />
 
-          <Servicios cambiarVista={cambiarVista} />
+          <Servicios
+            cambiarVista={cambiarVista}
+            seleccionarServicio={(idServicio) => {
+              setServicioInicialId(idServicio);
+              cambiarVista("reservar");
+            }}
+          />
           <Barberos cambiarVista={cambiarVista} />
           <Cortes cambiarVista={cambiarVista} />
           <Ubicacion cambiarVista={cambiarVista} />
@@ -115,7 +122,13 @@ export default function Page() {
 
       {/* SERVICIOS */}
       {vista === "servicios" && (
-        <Servicios cambiarVista={cambiarVista} />
+        <Servicios
+          cambiarVista={cambiarVista}
+          seleccionarServicio={(idServicio) => {
+            setServicioInicialId(idServicio);
+            cambiarVista("reservar");
+          }}
+        />
       )}
 
       {/* BARBEROS */}
@@ -135,7 +148,10 @@ export default function Page() {
 
       {/* RESERVACIONES */}
       {vista === "reservar" && usuario && (
-        <Reservacion cambiarVista={cambiarVista} />
+        <Reservacion
+          cambiarVista={cambiarVista}
+          servicioInicialId={servicioInicialId}
+        />
       )}
 
       {/* UBICACIÓN */}
