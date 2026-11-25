@@ -444,6 +444,64 @@ button {
   gap: 20px;
 }
 
+/* Carrusel horizontal de servicios */
+.servicios-carrusel-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.servicios-carrusel {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 12px 4px 24px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #2fa4ff #0b1c2e;
+}
+
+.servicios-carrusel .servicio-card {
+  flex: 0 0 calc((100% - 40px) / 3);
+  min-width: 250px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.servicio-reservar-indicacion {
+  display: inline-block;
+  margin-top: 22px;
+  color: #2fa4ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.servicios-carrusel-flecha {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(47, 164, 255, 0.4);
+  border-radius: 50%;
+  background: #0b1c2e;
+  color: #2fa4ff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.servicios-carrusel-flecha:hover {
+  background: #2fa4ff;
+  color: #ffffff;
+}
+
 .servicio-card {
   position: relative;
   padding: 35px;
@@ -1829,6 +1887,10 @@ button {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .servicios-carrusel .servicio-card {
+    flex-basis: calc((100% - 20px) / 2);
+  }
+
   .barberos-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1869,6 +1931,21 @@ button {
 }
 
 @media (max-width: 700px) {
+  .servicios-carrusel .servicio-card {
+    flex-basis: 85%;
+    min-width: 0;
+  }
+
+  .servicios-carrusel-contenedor {
+    gap: 6px;
+  }
+
+  .servicios-carrusel-flecha {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
 
   .seccion {
     padding: 100px 20px 40px;
