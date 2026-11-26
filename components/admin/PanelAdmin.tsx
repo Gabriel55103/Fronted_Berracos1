@@ -14,7 +14,8 @@ type SeccionAdmin =
   | "clientes"
   | "barberos"
   | "servicios"
-  | "cortes";
+  | "cortes"
+  | "estadisticas";
 
 type UsuarioAdmin = {
   idUsuario: number;
@@ -62,12 +63,14 @@ const servicioInicial = {
   descripcion: "",
   icono: "✂",
   precio: "",
+  imagen: "",
 };
 
 const corteInicial = {
   nombre: "",
   descripcion: "",
   precio: "",
+  imagen: "",
 };
 
 const barberoInicial = {
@@ -447,6 +450,7 @@ export default function PanelAdmin() {
         descripcion: formServicio.descripcion.trim(),
         icono: formServicio.icono.trim(),
         precio,
+        imagen: formServicio.imagen.trim() || null,
         activo: true,
       };
 
@@ -477,8 +481,8 @@ export default function PanelAdmin() {
       }
 
       setFormServicio(servicioInicial);
-      setServicioEditando(null);
       setImagenServicio(null);
+      setServicioEditando(null);
 
       setMensaje(
         servicioEditando
@@ -507,8 +511,8 @@ export default function PanelAdmin() {
       descripcion: servicio.descripcion,
       icono: servicio.icono,
       precio: String(servicio.precio),
+      imagen: servicio.imagen || "",
     });
-
     setImagenServicio(null);
     setMensaje("");
     setError("");
@@ -563,6 +567,7 @@ export default function PanelAdmin() {
         nombre: formCorte.nombre.trim(),
         descripcion: formCorte.descripcion.trim(),
         precio,
+        imagen: formCorte.imagen.trim() || null,
         activo: true,
       };
 
@@ -593,8 +598,8 @@ export default function PanelAdmin() {
       }
 
       setFormCorte(corteInicial);
-      setCorteEditando(null);
       setImagenCorte(null);
+      setCorteEditando(null);
 
       setMensaje(
         corteEditando
@@ -622,8 +627,8 @@ export default function PanelAdmin() {
       nombre: corte.nombre,
       descripcion: corte.descripcion,
       precio: String(corte.precio),
+      imagen: corte.imagen || "",
     });
-
     setImagenCorte(null);
     setMensaje("");
     setError("");
@@ -720,6 +725,78 @@ export default function PanelAdmin() {
     (reserva) => reserva.estado === "CANCELADA"
   ).length;
 
+  // INGRESOS: solo se consideran ventas completadas para no contar citas pendientes o canceladas.
+  const ventasCompletadas = useMemo(
+    () => reservaciones.filter((reserva) => reserva.estado === "COMPLETADA"),
+    [reservaciones]
+  );
+
+  const solicitudesValidas = useMemo(
+    () => reservaciones.filter((reserva) => reserva.estado !== "CANCELADA"),
+    [reservaciones]
+  );
+
+  const analisisVentas = useMemo(() => {
+    const totalVentas = ventasCompletadas.reduce(
+      (total, reserva) => total + Number(reserva.precio || 0),
+      0
+    );
+
+    const fechaActual = new Date();
+    const meses = Array.from({ length: 6 }, (_, indice) => {
+      const fecha = new Date(
+        fechaActual.getFullYear(),
+        fechaActual.getMonth() - (5 - indice),
+        1
+      );
+      const clave = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, "0")}`;
+      return {
+        clave,
+        etiqueta: fecha.toLocaleDateString("es-MX", { month: "short" }),
+        total: 0,
+      };
+    });
+
+    ventasCompletadas.forEach((reserva) => {
+      const clave = reserva.fecha?.slice(0, 7);
+      const mes = meses.find((item) => item.clave === clave);
+      if (mes) mes.total += Number(reserva.precio || 0);
+    });
+
+    const agruparProductos = (tipo: "SERVICIO" | "CORTE") => {
+      const grupos = solicitudesValidas
+        .filter((reserva) => reserva.tipoProducto === tipo)
+        .reduce<Record<string, number>>((acumulado, reserva) => {
+          const nombre = reserva.servicio?.trim() || "Sin nombre";
+          acumulado[nombre] = (acumulado[nombre] || 0) + 1;
+          return acumulado;
+        }, {});
+
+      return Object.entries(grupos)
+        .map(([nombre, cantidad]) => ({ nombre, cantidad }))
+        .sort((a, b) => b.cantidad - a.cantidad)
+        .slice(0, 5);
+    };
+
+    return {
+      totalVentas,
+      cantidadVentas: ventasCompletadas.length,
+      promedioVenta: ventasCompletadas.length
+        ? totalVentas / ventasCompletadas.length
+        : 0,
+      meses,
+      serviciosPopulares: agruparProductos("SERVICIO"),
+      cortesPopulares: agruparProductos("CORTE"),
+    };
+  }, [ventasCompletadas, solicitudesValidas]);
+
+  const formatoMoneda = (valor: number) =>
+    valor.toLocaleString("es-MX", {
+      style: "currency",
+      currency: "MXN",
+      maximumFractionDigits: 0,
+    });
+
   return (
     <main className="panel-admin">
       <header className="admin-encabezado">
@@ -791,6 +868,16 @@ export default function PanelAdmin() {
           }}
         >
           <span>◈</span> Cortes
+        </button>
+
+        <button
+          className={seccion === "estadisticas" ? "seleccionado" : ""}
+          onClick={() => {
+            setSeccion("estadisticas");
+            cargarReservaciones();
+          }}
+        >
+          <span>▥</span> Estadísticas
         </button>
       </nav>
 
@@ -1512,14 +1599,28 @@ export default function PanelAdmin() {
 
             <label>Imagen del servicio</label>
 
-            {servicioEditando?.imagen && (
+            {formServicio.imagen && (
               <img
-                src={urlImagen(servicioEditando.imagen)}
-                alt={servicioEditando.nombre}
+                src={urlImagen(formServicio.imagen)}
+                alt={formServicio.nombre || "Vista previa del servicio"}
                 className="admin-imagen-preview"
               />
             )}
 
+            <label>URL de la imagen (opcional)</label>
+            <input
+              type="url"
+              value={formServicio.imagen}
+              onChange={(e) =>
+                setFormServicio({
+                  ...formServicio,
+                  imagen: e.target.value,
+                })
+              }
+              placeholder="Pega aquí la URL pública de Google Drive"
+            />
+
+            <label>O selecciona una imagen desde tu dispositivo</label>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
@@ -1527,7 +1628,6 @@ export default function PanelAdmin() {
                 setImagenServicio(e.target.files?.[0] || null)
               }
             />
-
             {imagenServicio && (
               <small>Archivo seleccionado: {imagenServicio.name}</small>
             )}
@@ -1693,14 +1793,28 @@ export default function PanelAdmin() {
 
             <label>Imagen del corte</label>
 
-            {corteEditando?.imagen && (
+            {formCorte.imagen && (
               <img
-                src={urlImagen(corteEditando.imagen)}
-                alt={corteEditando.nombre}
+                src={urlImagen(formCorte.imagen)}
+                alt={formCorte.nombre || "Vista previa del corte"}
                 className="admin-imagen-preview"
               />
             )}
 
+            <label>URL de la imagen (opcional)</label>
+            <input
+              type="url"
+              value={formCorte.imagen}
+              onChange={(e) =>
+                setFormCorte({
+                  ...formCorte,
+                  imagen: e.target.value,
+                })
+              }
+              placeholder="Pega aquí la URL pública de Google Drive"
+            />
+
+            <label>O selecciona una imagen desde tu dispositivo</label>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp"
@@ -1708,7 +1822,6 @@ export default function PanelAdmin() {
                 setImagenCorte(e.target.files?.[0] || null)
               }
             />
-
             {imagenCorte && (
               <small>Archivo seleccionado: {imagenCorte.name}</small>
             )}
@@ -1804,6 +1917,139 @@ export default function PanelAdmin() {
               ))}
             </div>
           )}
+        </section>
+      )}
+
+      {/* ESTADÍSTICAS DE VENTAS Y DEMANDA */}
+      {seccion === "estadisticas" && (
+        <section className="admin-contenido admin-analiticas">
+          <div className="admin-analiticas-encabezado">
+            <div>
+              <h2>Ventas y servicios más solicitados</h2>
+              <p className="admin-descripcion">
+                Análisis basado en las reservaciones registradas en la aplicación.
+              </p>
+            </div>
+            <button
+              type="button"
+              className="admin-boton-principal"
+              onClick={cargarReservaciones}
+              disabled={cargandoReservaciones}
+            >
+              {cargandoReservaciones ? "Actualizando..." : "Actualizar datos"}
+            </button>
+          </div>
+
+          <div className="admin-analiticas-nota">
+            Los ingresos incluyen únicamente citas completadas. La demanda cuenta
+            solicitudes pendientes, confirmadas y completadas; las canceladas se excluyen.
+          </div>
+
+          <div className="admin-analiticas-resumen">
+            <article className="admin-analitica-indicador">
+              <span>Ventas completadas</span>
+              <strong>{formatoMoneda(analisisVentas.totalVentas)}</strong>
+            </article>
+            <article className="admin-analitica-indicador">
+              <span>Citas completadas</span>
+              <strong>{analisisVentas.cantidadVentas}</strong>
+            </article>
+            <article className="admin-analitica-indicador">
+              <span>Ticket promedio</span>
+              <strong>{formatoMoneda(analisisVentas.promedioVenta)}</strong>
+            </article>
+            <article className="admin-analitica-indicador">
+              <span>Solicitudes no canceladas</span>
+              <strong>{solicitudesValidas.length}</strong>
+            </article>
+          </div>
+
+          <div className="admin-analiticas-grid">
+            <article className="admin-grafica-card admin-grafica-ventas">
+              <div className="admin-grafica-titulo">
+                <h3>Ventas por mes</h3>
+                <span>Últimos 6 meses · MXN</span>
+              </div>
+              {analisisVentas.cantidadVentas === 0 ? (
+                <p className="admin-grafica-vacia">
+                  Aún no hay citas completadas para mostrar ventas.
+                </p>
+              ) : (
+                <div className="admin-grafica-columnas" role="img" aria-label="Gráfica de ventas completadas por mes">
+                  {analisisVentas.meses.map((mes) => {
+                    const maximo = Math.max(...analisisVentas.meses.map((item) => item.total), 1);
+                    const altura = mes.total > 0 ? Math.max((mes.total / maximo) * 100, 5) : 0;
+                    return (
+                      <div className="admin-grafica-columna" key={mes.clave}>
+                        <strong>{formatoMoneda(mes.total)}</strong>
+                        <div className="admin-grafica-barra-contenedor">
+                          <span
+                            className="admin-grafica-barra"
+                            style={{ height: `${altura}%` }}
+                          />
+                        </div>
+                        <small>{mes.etiqueta}</small>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </article>
+
+            <article className="admin-grafica-card">
+              <div className="admin-grafica-titulo">
+                <h3>Servicios más solicitados</h3>
+                <span>Por número de solicitudes</span>
+              </div>
+              {analisisVentas.serviciosPopulares.length === 0 ? (
+                <p className="admin-grafica-vacia">Todavía no hay solicitudes de servicios.</p>
+              ) : (
+                <div className="admin-ranking">
+                  {analisisVentas.serviciosPopulares.map((item) => {
+                    const maximo = analisisVentas.serviciosPopulares[0].cantidad;
+                    return (
+                      <div className="admin-ranking-item" key={item.nombre}>
+                        <div className="admin-ranking-etiqueta">
+                          <span>{item.nombre}</span>
+                          <strong>{item.cantidad}</strong>
+                        </div>
+                        <div className="admin-ranking-fondo">
+                          <span style={{ width: `${(item.cantidad / maximo) * 100}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </article>
+
+            <article className="admin-grafica-card">
+              <div className="admin-grafica-titulo">
+                <h3>Cortes más solicitados</h3>
+                <span>Por número de solicitudes</span>
+              </div>
+              {analisisVentas.cortesPopulares.length === 0 ? (
+                <p className="admin-grafica-vacia">Todavía no hay solicitudes de cortes.</p>
+              ) : (
+                <div className="admin-ranking">
+                  {analisisVentas.cortesPopulares.map((item) => {
+                    const maximo = analisisVentas.cortesPopulares[0].cantidad;
+                    return (
+                      <div className="admin-ranking-item" key={item.nombre}>
+                        <div className="admin-ranking-etiqueta">
+                          <span>{item.nombre}</span>
+                          <strong>{item.cantidad}</strong>
+                        </div>
+                        <div className="admin-ranking-fondo">
+                          <span style={{ width: `${(item.cantidad / maximo) * 100}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </article>
+          </div>
         </section>
       )}
     </main>

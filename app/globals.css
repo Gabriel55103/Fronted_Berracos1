@@ -444,6 +444,64 @@ button {
   gap: 20px;
 }
 
+/* Carrusel horizontal de servicios */
+.servicios-carrusel-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.servicios-carrusel {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 12px 4px 24px;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #2fa4ff #0b1c2e;
+}
+
+.servicios-carrusel .servicio-card {
+  flex: 0 0 calc((100% - 40px) / 3);
+  min-width: 250px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  scroll-snap-align: start;
+}
+
+.servicio-reservar-indicacion {
+  display: inline-block;
+  margin-top: 22px;
+  color: #2fa4ff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.servicios-carrusel-flecha {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(47, 164, 255, 0.4);
+  border-radius: 50%;
+  background: #0b1c2e;
+  color: #2fa4ff;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.servicios-carrusel-flecha:hover {
+  background: #2fa4ff;
+  color: #ffffff;
+}
+
 .servicio-card {
   position: relative;
   padding: 35px;
@@ -1829,6 +1887,10 @@ button {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .servicios-carrusel .servicio-card {
+    flex-basis: calc((100% - 20px) / 2);
+  }
+
   .barberos-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1869,6 +1931,21 @@ button {
 }
 
 @media (max-width: 700px) {
+  .servicios-carrusel .servicio-card {
+    flex-basis: 85%;
+    min-width: 0;
+  }
+
+  .servicios-carrusel-contenedor {
+    gap: 6px;
+  }
+
+  .servicios-carrusel-flecha {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
 
   .seccion {
     padding: 100px 20px 40px;
@@ -3294,4 +3371,299 @@ button {
 
 .login-mostrar-password:hover {
   color: #ffffff;
+}
+
+
+/* Navegación superior: escritorio con enlaces visibles y menú compacto en móvil. */
+.navbar {
+  gap: 22px;
+  padding: 0 28px;
+}
+
+.navbar-logo {
+  flex: 0 0 auto;
+  padding: 8px 0;
+  white-space: nowrap;
+}
+
+.navbar-menu-boton {
+  display: none;
+}
+
+.navbar-menu-contenido,
+.navbar-menu-contenido.menu-abierto {
+  position: static;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(12px, 1.5vw, 24px);
+  width: auto;
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.navbar-menu-contenido .navbar-links {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: clamp(10px, 1.35vw, 22px);
+  width: auto;
+  min-width: 0;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+.navbar-menu-contenido .navbar-links li {
+  display: block;
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.navbar-menu-contenido .navbar-links li > button {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  min-height: 42px;
+  padding: 8px 0;
+  font-size: clamp(10px, 0.78vw, 12px);
+  white-space: nowrap;
+}
+
+.navbar-menu-contenido .navbar-links li > button::after {
+  bottom: 3px;
+}
+
+.navbar-menu-contenido .navbar-usuario {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: auto;
+  max-width: 230px;
+  padding: 0;
+  border: 0;
+  color: #ffffff;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.navbar-menu-contenido .navbar-usuario .navbar-login,
+.navbar-menu-contenido .navbar-usuario .navbar-cerrar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 12px;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+  .navbar {
+    gap: 16px;
+    padding: 0 18px;
+  }
+
+  .navbar-menu-contenido {
+    gap: 12px;
+  }
+
+  .navbar-menu-contenido .navbar-links {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .navbar-menu-contenido .navbar-links li > button {
+    font-size: 10px;
+    letter-spacing: 0.4px;
+  }
+
+  .navbar-menu-contenido .navbar-usuario {
+    max-width: 170px;
+  }
+}
+
+/* En teléfonos se usa el botón de tres barras y un desplegable vertical. */
+@media (max-width: 760px) {
+  .navbar {
+    height: 75px;
+    min-height: 75px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0;
+    padding: 0 16px;
+  }
+
+  .navbar-logo {
+    min-height: 42px;
+    font-size: 17px;
+  }
+
+  .navbar-menu-boton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    padding: 9px;
+    border: 1px solid rgba(47, 164, 255, 0.65);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 2002;
+  }
+
+  .navbar-menu-boton span {
+    display: block;
+    width: 23px;
+    height: 2px;
+    flex: 0 0 2px;
+    border-radius: 5px;
+    background: #2fa4ff;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+  }
+
+  .navbar-menu-boton.activo span:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .navbar-menu-boton.activo span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .navbar-menu-boton.activo span:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .navbar-menu-contenido,
+  .navbar-menu-contenido.menu-abierto {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 85px);
+    margin: 0;
+    padding: 14px 18px 18px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: rgba(2, 6, 11, 0.98);
+    border: 1px solid rgba(47, 164, 255, 0.35);
+    border-top: 1px solid rgba(47, 164, 255, 0.35);
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+    z-index: 2001;
+  }
+
+  .navbar-menu-contenido.menu-abierto {
+    display: flex;
+  }
+
+  .navbar-menu-contenido .navbar-links {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    gap: 3px;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    white-space: normal;
+    list-style: none;
+  }
+
+  .navbar-menu-contenido .navbar-links li {
+    display: block;
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .navbar-menu-contenido .navbar-links li > button {
+    display: block;
+    width: 100%;
+    min-height: 43px;
+    padding: 11px 10px;
+    text-align: left;
+    white-space: normal;
+    font-size: 12px;
+  }
+
+  .navbar-menu-contenido .navbar-links li > button::after {
+    bottom: 4px;
+  }
+
+  .navbar-menu-contenido .navbar-usuario {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    width: 100%;
+    max-width: none;
+    padding-top: 14px;
+    border-top: 1px solid rgba(47, 164, 255, 0.22);
+    color: #ffffff;
+    text-align: left;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+  }
+
+  .navbar-menu-contenido .navbar-usuario .navbar-login,
+  .navbar-menu-contenido .navbar-usuario .navbar-cerrar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    white-space: nowrap;
+  }
+
+  .seccion {
+    scroll-margin-top: 95px;
+  }
+}
+
+@media (max-width: 420px) {
+  .navbar {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .navbar-logo {
+    font-size: 15px;
+    letter-spacing: 1.5px;
+  }
 }

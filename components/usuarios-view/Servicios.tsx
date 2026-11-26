@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 
 type Servicio = {
@@ -16,6 +16,7 @@ type Servicio = {
 
 type ServiciosProps = {
   cambiarVista: (vista: string) => void;
+  seleccionarServicio: (idServicio: number) => void;
 };
 
 const API_URL =
@@ -31,10 +32,19 @@ function urlImagen(imagen: string | null) {
 
 export default function Servicios({
   cambiarVista,
+  seleccionarServicio,
 }: ServiciosProps) {
   const [servicios, setServicios] = useState<Servicio[]>([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const carruselRef = useRef<HTMLDivElement>(null);
+
+  const moverCarrusel = (direccion: number) => {
+    carruselRef.current?.scrollBy({
+      left: direccion * carruselRef.current.clientWidth * 0.8,
+      behavior: "smooth",
+    });
+  };
 
   useEffect(() => {
     let activo = true;
@@ -95,41 +105,63 @@ export default function Servicios({
           No hay servicios disponibles.
         </p>
       ) : (
-        <div className="servicios-grid">
-          {servicios.map((servicio) => (
-            <article
-              className="servicio-card"
-              key={servicio.idServicio}
-            >
-              <div className="servicio-imagen-contenedor">
-                {servicio.imagen ? (
-                  <img
-                    className="servicio-imagen"
-                    src={urlImagen(servicio.imagen)}
-                    alt={`Imagen de ${servicio.nombre}`}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                ) : (
-                  <div className="servicio-icono">
-                    {servicio.icono}
-                  </div>
-                )}
-              </div>
+        <div className="servicios-carrusel-contenedor">
+          <button
+            type="button"
+            className="servicios-carrusel-flecha"
+            aria-label="Ver servicios anteriores"
+            onClick={() => moverCarrusel(-1)}
+          >
+            &#10094;
+          </button>
 
-              <h3>{servicio.nombre}</h3>
+          <div className="servicios-carrusel" ref={carruselRef}>
+            {servicios.map((servicio) => (
+              <button
+                type="button"
+                className="servicio-card"
+                key={servicio.idServicio}
+                onClick={() => seleccionarServicio(servicio.idServicio)}
+                aria-label={`Reservar ${servicio.nombre}`}
+              >
+                <div className="servicio-imagen-contenedor">
+                  {servicio.imagen ? (
+                    <img
+                      className="servicio-imagen"
+                      src={urlImagen(servicio.imagen)}
+                      alt={`Imagen de ${servicio.nombre}`}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="servicio-icono">{servicio.icono}</div>
+                  )}
+                </div>
 
-              <p>{servicio.descripcion}</p>
+                <h3>{servicio.nombre}</h3>
+                <p>{servicio.descripcion}</p>
+                <strong className="servicio-precio">
+                  {Number(servicio.precio).toLocaleString("es-MX", {
+                    style: "currency",
+                    currency: "MXN",
+                  })}
+                </strong>
+                <span className="servicio-reservar-indicacion">
+                  SELECCIONAR SERVICIO
+                </span>
+              </button>
+            ))}
+          </div>
 
-              <strong className="servicio-precio">
-                {Number(servicio.precio).toLocaleString("es-MX", {
-                  style: "currency",
-                  currency: "MXN",
-                })}
-              </strong>
-            </article>
-          ))}
+          <button
+            type="button"
+            className="servicios-carrusel-flecha"
+            aria-label="Ver siguientes servicios"
+            onClick={() => moverCarrusel(1)}
+          >
+            &#10095;
+          </button>
         </div>
       )}
 

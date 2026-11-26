@@ -51,6 +51,7 @@ type RespuestaReserva = {
 
 type ReservacionProps = {
   cambiarVista: (vista: string) => void;
+  servicioInicialId?: number | null;
 };
 
 const nombresMeses = [
@@ -88,6 +89,7 @@ function formatearPrecio(precio: number) {
 
 export default function Reservacion({
   cambiarVista,
+  servicioInicialId,
 }: ReservacionProps) {
   const hoy = new Date();
 
@@ -181,6 +183,21 @@ export default function Reservacion({
         );
 
         setServicios(serviciosActivos);
+
+        if (servicioInicialId != null) {
+          const servicioPreseleccionado = serviciosActivos.find(
+            (servicio) => servicio.idServicio === servicioInicialId
+          );
+
+          if (servicioPreseleccionado) {
+            setReserva((prev) => ({
+              ...prev,
+              servicio: servicioPreseleccionado.nombre,
+              tipoProducto: "SERVICIO",
+            }));
+          }
+        }
+
         setCortes(cortesActivos);
         setBarberos(barberosActivos);
 

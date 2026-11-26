@@ -532,3 +532,271 @@
   margin-right: 12px;
   cursor: pointer;
 }
+
+
+/* Analítica del administrador: gráficas responsivas con la identidad azul de Berracos. */
+.admin-analiticas-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.admin-analiticas-encabezado h2 {
+  margin-bottom: 8px;
+}
+
+.admin-analiticas-nota {
+  margin-bottom: 22px;
+  padding: 13px 16px;
+  border: 1px solid rgba(47, 164, 255, 0.25);
+  border-radius: 8px;
+  background: rgba(47, 164, 255, 0.07);
+  color: #a9b7c6;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.admin-analiticas-resumen {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.admin-analitica-indicador {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 19px;
+  border: 1px solid #20384c;
+  border-radius: 11px;
+  background: #081522;
+}
+
+.admin-analitica-indicador span {
+  color: #a9b7c6;
+  font-size: 13px;
+}
+
+.admin-analitica-indicador strong {
+  color: #2fa4ff;
+  font-size: clamp(20px, 2vw, 27px);
+  overflow-wrap: anywhere;
+}
+
+.admin-analiticas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-grafica-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #20384c;
+  border-radius: 12px;
+  background: #081522;
+}
+
+.admin-grafica-ventas {
+  grid-column: 1 / -1;
+}
+
+.admin-grafica-titulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 22px;
+}
+
+.admin-grafica-titulo h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 17px;
+}
+
+.admin-grafica-titulo > span {
+  color: #8fa3b8;
+  font-size: 12px;
+}
+
+.admin-grafica-vacia {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  margin: 0;
+  color: #8fa3b8;
+  text-align: center;
+  font-size: 14px;
+}
+
+.admin-grafica-columnas {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: end;
+  gap: 14px;
+  min-height: 230px;
+  padding-top: 8px;
+}
+
+.admin-grafica-columna {
+  display: flex;
+  min-width: 0;
+  height: 220px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.admin-grafica-columna strong {
+  max-width: 100%;
+  color: #a9b7c6;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.admin-grafica-barra-contenedor {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: min(100%, 58px);
+  height: 145px;
+  overflow: hidden;
+  border-radius: 7px 7px 2px 2px;
+  background: rgba(47, 164, 255, 0.08);
+}
+
+.admin-grafica-barra {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  border-radius: 7px 7px 0 0;
+  background: linear-gradient(180deg, #48b5ff, #167ac2);
+  transition: height 0.25s ease;
+}
+
+.admin-grafica-columna small {
+  color: #a9b7c6;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.admin-ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-ranking-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-ranking-etiqueta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #c1ceda;
+  font-size: 13px;
+}
+
+.admin-ranking-etiqueta span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-ranking-etiqueta strong {
+  flex: 0 0 auto;
+  color: #ffffff;
+}
+
+.admin-ranking-fondo {
+  width: 100%;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(47, 164, 255, 0.12);
+}
+
+.admin-ranking-fondo span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #167ac2, #48b5ff);
+}
+
+@media (max-width: 900px) {
+  .admin-analiticas-resumen {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-analiticas-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-grafica-ventas {
+    grid-column: auto;
+  }
+
+  .admin-grafica-card {
+    padding: 17px 14px;
+  }
+
+  .admin-grafica-columnas {
+    gap: 7px;
+    min-height: 205px;
+  }
+
+  .admin-grafica-columna {
+    height: 200px;
+    gap: 6px;
+  }
+
+  .admin-grafica-columna strong {
+    font-size: 9px;
+  }
+
+  .admin-grafica-barra-contenedor {
+    width: min(100%, 38px);
+    height: 125px;
+  }
+
+  .admin-grafica-columna small {
+    font-size: 10px;
+  }
+
+  .admin-analiticas-resumen {
+    gap: 10px;
+  }
+
+  .admin-analitica-indicador {
+    padding: 15px 13px;
+  }
+
+  .admin-analitica-indicador span {
+    font-size: 12px;
+  }
+
+  .admin-analitica-indicador strong {
+    font-size: 20px;
+  }
+
+  .admin-analiticas-encabezado > button {
+    width: 100%;
+  }
+}
